@@ -14,7 +14,7 @@
     "db:seed": "npx tsx lib/db/seed.ts"
   },
   "dependencies": {
-    "@buildersgarden/siwa": "^0.0.15",
+    "@buildersgarden/siwa": "^0.0.16",
     "@hookform/resolvers": "^5.2.2",
     "@libsql/client": "^0.17.0",
     "@node-rs/argon2": "^2.0.2",

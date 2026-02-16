@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@buildersgarden/siwa':
-        specifier: ^0.0.15
-        version: 0.0.15(typescript@5.9.3)(zod@4.3.6)
+        specifier: ^0.0.16
+        version: 0.0.16(typescript@5.9.3)(zod@4.3.6)
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.71.1(react@19.2.3))
@@ -229,8 +229,8 @@ packages:
     resolution: {integrity: sha512-0ZrskXVEHSWIqZM/sQZ4EV3jZJXRkio/WCxaqKZP1g//CEWEPSfeZFcms4XeKBCHU0ZKnIkdJeU/kF+eRp5lBg==}
     engines: {node: '>=6.9.0'}
 
-  '@buildersgarden/siwa@0.0.15':
-    resolution: {integrity: sha512-cOIowlHAW256YTHHzL4aaK1COS40p2iLsNDUFK332fJmjHiTMx3uYUUQW6Au5Y13+tj3QSb69vby2+wHzJprnQ==}
+  '@buildersgarden/siwa@0.0.16':
+    resolution: {integrity: sha512-1YzZ5Xk0Uz/gPHPPKfad9kSHZzdhMuaKruqslxe0qxyNlLx86lLZhQiEV/BDOkgk0uE/7YUAtgXe8hXIZ2kA1Q==}
     peerDependencies:
       '@circle-fin/developer-controlled-wallets': '>=6.0.0'
       '@fastify/cors': '>=9.0.0'
@@ -3795,7 +3795,7 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@buildersgarden/siwa@0.0.15(typescript@5.9.3)(zod@4.3.6)':
+  '@buildersgarden/siwa@0.0.16(typescript@5.9.3)(zod@4.3.6)':
     dependencies:
       '@slicekit/erc8128': 0.1.0
       viem: 2.46.1(typescript@5.9.3)(zod@4.3.6)
