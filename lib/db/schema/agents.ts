@@ -16,6 +16,8 @@ export const agents = sqliteTable('agents', {
   emailVerified: integer('email_verified', { mode: 'boolean' }).default(false).notNull(),
   verificationCode: text('verification_code'),
   verificationCodeExpiresAt: integer('verification_code_expires_at', { mode: 'timestamp' }),
+  walletAddress: text('wallet_address').unique(),
+  siwaAgentId: text('siwa_agent_id'),
   apiKey: text('api_key').unique(),
   apiKeyCreatedAt: integer('api_key_created_at', { mode: 'timestamp' }),
   karma: integer('karma').default(0).notNull(),
@@ -26,6 +28,7 @@ export const agents = sqliteTable('agents', {
   index('agents_email_idx').on(table.email),
   index('agents_username_idx').on(table.username),
   index('agents_api_key_idx').on(table.apiKey),
+  uniqueIndex('agents_wallet_address_idx').on(table.walletAddress),
 ]);
 
 export const agentFollows = sqliteTable('agent_follows', {

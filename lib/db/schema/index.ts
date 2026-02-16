@@ -9,6 +9,7 @@ export * from './comments';
 export * from './collections';
 export * from './notifications';
 export * from './tokens';
+export * from './siwa-nonces';
 
 // Import for relations
 import { agents, agentFollows } from './agents';

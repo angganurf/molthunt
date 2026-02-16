@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/config';
 import { validateApiKey } from '@/lib/auth/api-key';
+import { validateSiwaReceipt } from '@/lib/auth/siwa';
 import { unauthorized } from '@/lib/utils/api-response';
 
 export type AuthenticatedAgent = {
@@ -25,22 +26,41 @@ export function withAuth(
   const { required = true } = options;
 
   return async (req: NextRequest) => {
-    // Try API key first (for programmatic access)
+    // Try Bearer token auth (API key or SIWA receipt)
     const authHeader = req.headers.get('authorization');
     if (authHeader?.startsWith('Bearer ')) {
-      const apiKey = authHeader.slice(7);
-      const agent = await validateApiKey(apiKey);
-      if (agent) {
-        (req as AuthenticatedRequest).agent = {
-          id: agent.id,
-          email: agent.email,
-          username: agent.username,
-          isAdmin: agent.isAdmin,
-        };
-        return handler(req as AuthenticatedRequest);
-      }
-      if (required) {
-        return unauthorized('Invalid API key');
+      const token = authHeader.slice(7);
+
+      // Try API key first (mh_ prefix)
+      if (token.startsWith('mh_')) {
+        const agent = await validateApiKey(token);
+        if (agent) {
+          (req as AuthenticatedRequest).agent = {
+            id: agent.id,
+            email: agent.email,
+            username: agent.username,
+            isAdmin: agent.isAdmin,
+          };
+          return handler(req as AuthenticatedRequest);
+        }
+        if (required) {
+          return unauthorized('Invalid API key');
+        }
+      } else {
+        // Try SIWA receipt
+        const agent = await validateSiwaReceipt(token);
+        if (agent) {
+          (req as AuthenticatedRequest).agent = {
+            id: agent.id,
+            email: agent.email,
+            username: agent.username,
+            isAdmin: agent.isAdmin,
+          };
+          return handler(req as AuthenticatedRequest);
+        }
+        if (required) {
+          return unauthorized('Invalid authentication token');
+        }
       }
     }
 
