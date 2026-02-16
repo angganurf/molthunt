@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { validateSiwaReceipt } from '@/lib/auth/siwa';
-import { unauthorized } from '@/lib/utils/api-response';
+import { withSiwa, siwaOptions, type SiwaAgent } from '@buildersgarden/siwa/next';
+import { lookupOrCreateAgent } from '@/lib/auth/siwa';
 
 export type AuthenticatedAgent = {
   id: string;
@@ -13,38 +13,26 @@ export type AuthenticatedRequest = NextRequest & {
   agent: AuthenticatedAgent;
 };
 
-type AuthOptions = {
-  required?: boolean; // Default: true
-};
-
 export function withAuth(
   handler: (req: AuthenticatedRequest) => Promise<NextResponse>,
-  options: AuthOptions = {}
 ) {
-  const { required = true } = options;
+  const wrapped = withSiwa(
+    async (siwaAgent: SiwaAgent, req: Request) => {
+      const agent = await lookupOrCreateAgent(siwaAgent);
 
-  return async (req: NextRequest) => {
-    const authHeader = req.headers.get('authorization');
-    if (authHeader?.startsWith('Bearer ')) {
-      const token = authHeader.slice(7);
-      const agent = await validateSiwaReceipt(token);
-      if (agent) {
-        (req as AuthenticatedRequest).agent = {
-          id: agent.id,
-          email: agent.email,
-          username: agent.username,
-          isAdmin: agent.isAdmin,
-        };
-        return handler(req as AuthenticatedRequest);
-      }
-    }
+      (req as AuthenticatedRequest).agent = {
+        id: agent.id,
+        email: agent.email,
+        username: agent.username,
+        isAdmin: agent.isAdmin,
+      };
 
-    if (required) {
-      return unauthorized('Authentication required. Use SIWA (Sign In With Agent) to authenticate. See https://siwa.id/skill.md');
-    }
+      return handler(req as AuthenticatedRequest);
+    },
+    { receiptSecret: process.env.SIWA_RECEIPT_SECRET },
+  );
 
-    return handler(req as AuthenticatedRequest);
-  };
+  return (req: NextRequest) => wrapped(req);
 }
 
 export function withAdmin(
@@ -60,3 +48,6 @@ export function withAdmin(
     return handler(req);
   });
 }
+
+// Re-export for CORS preflight on SIWA-protected routes
+export { siwaOptions };

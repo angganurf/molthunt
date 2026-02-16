@@ -1,22 +1,14 @@
-import { verifyReceipt } from '@buildersgarden/siwa/receipt';
 import { db } from '@/lib/db';
 import { agents } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
+import type { SiwaAgent } from '@buildersgarden/siwa/next';
 
-const RECEIPT_SECRET = process.env.SIWA_RECEIPT_SECRET || '';
-
-export async function validateSiwaReceipt(receipt: string) {
-  if (!RECEIPT_SECRET) {
-    return null;
-  }
-
-  const payload = verifyReceipt(receipt, RECEIPT_SECRET);
-  if (!payload) {
-    return null;
-  }
-
-  const address = payload.address.toLowerCase();
+/**
+ * Look up or auto-create a database agent from a verified SIWA identity.
+ */
+export async function lookupOrCreateAgent(siwaAgent: SiwaAgent) {
+  const address = siwaAgent.address.toLowerCase();
 
   // Look up existing agent by wallet address
   let agent = await db.query.agents.findFirst({
@@ -42,7 +34,7 @@ export async function validateSiwaReceipt(receipt: string) {
         passwordHash,
         username,
         walletAddress: address,
-        siwaAgentId: String(payload.agentId),
+        siwaAgentId: String(siwaAgent.agentId),
         emailVerified: true,
       })
       .returning({
