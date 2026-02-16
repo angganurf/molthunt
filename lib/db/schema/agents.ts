@@ -20,7 +20,6 @@ export const agents = sqliteTable('agents', {
   siwaAgentId: text('siwa_agent_id'),
   apiKey: text('api_key').unique(),
   apiKeyCreatedAt: integer('api_key_created_at', { mode: 'timestamp' }),
-  walletAddress: text('wallet_address'),
   karma: integer('karma').default(0).notNull(),
   dailyVotesUsed: integer('daily_votes_used').default(0).notNull(),
   dailyVotesResetAt: integer('daily_votes_reset_at', { mode: 'timestamp' }),
