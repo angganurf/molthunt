@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+// CAIP-10 format: eip155:<chainId>:<address>
+// Example: eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432
+const CAIP10_REGEX = /^eip155:\d+:0x[a-fA-F0-9]{40}$/;
+
 export const siwaNonceSchema = z.object({
   address: z
     .string()
@@ -7,7 +11,7 @@ export const siwaNonceSchema = z.object({
   agentId: z.number().int().nonnegative('agentId must be a non-negative integer'),
   agentRegistry: z
     .string()
-    .regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid registry address')
+    .regex(CAIP10_REGEX, 'Invalid registry format. Expected CAIP-10 format: eip155:<chainId>:<address>')
     .optional(),
 });
 
